@@ -1,0 +1,15 @@
+---
+
+- hosts: Master
+  become: true
+  become_method: sudo
+
+  tasks:
+  - block:
+    - name: Install Jenkins
+      shell: |
+        git clone https://github.com/Crqck3d/ayomi_test.git
+        mkdir /mnt/jenkins_data
+        kubectl create namespace jenkins
+        kubectl create -f ./ayomi_test/jenkins/kube/jenkins-deployment.yaml --namespace jenkins
+        kubectl create -f ./ayomi_test/jenkins/kube/jenkins-service.yaml --namespace jenkins

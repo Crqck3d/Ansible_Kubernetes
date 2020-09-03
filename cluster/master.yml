@@ -1,0 +1,39 @@
+---
+
+- hosts: Master
+  become: true
+  become_method: sudo
+
+  tasks:
+  - name: Including vars
+    include_vars:
+      file: variables.yml
+      name: params
+
+  - name: Init kubeadm
+    shell: |
+      iptables -P FORWARD ACCEPT
+      kubeadm config images pull
+      kubeadm reset -f
+    register: output #kubeadm reset -f
+
+  - name: Initializing Kubernetes cluster
+    shell: |
+      kubeadm init --apiserver-advertise-address {{ params.addr }} --pod-network-cidr={{ params.cidr }}
+    register: output
+
+  - name: Generating token
+    local_action: copy content={{ output.stdout }} dest={{ params.file }}
+    become: False
+
+  - name: Copying kubeadm conf file
+    shell: |
+      mkdir -p $HOME/.kube
+      cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+      chown $(id -u):$(id -g) $HOME/.kube/config
+    environment:
+      KUBECONFIG: /root/.kube/config
+
+  - name: Installing the network add-on
+    shell: |
+      kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

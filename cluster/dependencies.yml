@@ -1,0 +1,60 @@
+---
+
+- hosts: all
+  become: true
+  become_method: sudo
+
+  tasks:
+  - name: Including vars
+    include_vars:
+      file: variables.yml
+      name: params
+
+  - name: Upgrade all packages
+    apt:
+      name: '*'
+      state: latest
+      update_cache: yes
+
+  - name: Install Google could package
+    shell: |
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+  - name: Set up Kubernetes
+    copy:
+      dest: "/etc/apt/sources.list.d/kubernetes.list"
+      content: |
+        deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+
+  - name: Upgrade all packages
+    apt:
+      name: '*'
+      state: latest
+      update_cache: yes
+
+  - name: Install the dependencies
+    apt:
+      name: "{{ params.package }}"
+      state: present
+    when: params.package is defined and params.package | length > 0
+
+  - name: Disable SWAP
+    shell: |
+      swapoff -a
+
+  - name: Disable SWAP in fstab
+    replace:
+      path: /etc/fstab
+      regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+      replace: '# \1'
+
+  - block:
+    - name: Restart kubelet and docker
+      systemd:
+        name: kubelet
+        state: started
+    - systemd:
+        state: started
+        name: docker
+        enabled: yes

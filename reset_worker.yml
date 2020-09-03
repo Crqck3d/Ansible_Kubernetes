@@ -1,0 +1,11 @@
+---
+
+- hosts: Worker
+  become: true
+  become_method: sudo
+
+  tasks:
+  - name: Reseting Kubeadm
+    shell: |
+     kubeadm reset -f
+     rm out.sh token

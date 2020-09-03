@@ -1,0 +1,6 @@
+---
+  - import_playbook: ./cluster/dependencies.yml
+  - import_playbook: ./cluster/master.yml
+  - import_playbook: ./cluster/worker.yml
+
+  - import_playbook: ./jenkins/install.yml
