@@ -1,7 +1,9 @@
 ---
 
-  dependencies: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common']
+  dependencies: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg2', 'software-properties-common', "python3-pip"]
   package: ['kubelet', 'kubeadm', 'kubectl', 'docker-ce']
+  pip3: ['openshift', 'pyyaml']
   addr: 192.168.26.150
   cidr: 10.244.0.0/16
-  file: token
+
+  tokenFile: token

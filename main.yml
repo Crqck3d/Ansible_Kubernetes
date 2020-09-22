@@ -3,4 +3,4 @@
   - import_playbook: ./cluster/master.yml
   - import_playbook: ./cluster/worker.yml
 
-  - import_playbook: ./jenkins/install.yml
+  - import_playbook: ./jenkins/jenkins.yml

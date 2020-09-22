@@ -10,6 +10,12 @@
       file: variables.yml
       name: params
 
+  - name: Install pip3 dependencies
+    pip:
+      name: "{{ params.pip3 }}"
+      state: present
+    when: params.pip3 is defined and params.pip3 | length > 0
+
   - name: Init kubeadm
     shell: |
       iptables -P FORWARD ACCEPT
@@ -21,7 +27,7 @@
     register: output
 
   - name: Generating token
-    local_action: copy content={{ output.stdout }} dest={{ params.file }}
+    local_action: copy content={{ output.stdout }} dest={{ params.tokenFile }}
     become: False
 
   - name: Copying kubeadm conf file

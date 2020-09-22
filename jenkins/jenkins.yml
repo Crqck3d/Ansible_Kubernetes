@@ -1,0 +1,66 @@
+---
+
+- hosts: Master
+  become: true
+  become_method: sudo
+
+  tasks:
+    - name: Create Jenkins folder
+      shell: |
+        mkdir /mnt/jenkins_data
+
+    - name: Create Jenkins namespace
+      k8s:
+        name: jenkins
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Create Jenkins Service
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: jenkins
+            namespace: jenkins
+          spec:
+            selector:
+              app: jenkins
+            ports:
+              - targetPort: 8080
+                port: 8080
+                nodePort: 30000
+            type: NodePort
+
+    - name: Deploy Jenkins
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: jenkins-deployment
+            namespace: jenkins
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: jenkins
+            template:
+              metadata:
+                labels:
+                  app: jenkins
+              spec:
+                containers:
+                  - name: jenkins
+                    image: jenkinsci/jenkins:latest
+                    ports:
+                      - containerPort: 8080
+                    volumeMounts:
+                      - name: jenkins-home
+                        mountPath: /var/jenkins_home
+                volumes:
+                  - name: jenkins-home
+                    emptyDir: { }

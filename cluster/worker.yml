@@ -11,7 +11,7 @@
       name: params
 
   - name: Copying token to nodes
-    copy: src={{ params.file }} dest=token
+    copy: src={{ params.tokenFile }} dest=token
 
   - name: Joining kubernetes master
     shell: |
