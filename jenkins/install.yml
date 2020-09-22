@@ -8,8 +8,8 @@
   - block:
     - name: Install Jenkins
       shell: |
-        git clone https://github.com/Crqck3d/ayomi_test.git
+        git clone https://github.com/Crqck3d/Ansible_Kubernetes.git
         mkdir /mnt/jenkins_data
         kubectl create namespace jenkins
-        kubectl create -f ./ayomi_test/jenkins/kube/jenkins-deployment.yaml --namespace jenkins
-        kubectl create -f ./ayomi_test/jenkins/kube/jenkins-service.yaml --namespace jenkins
+        kubectl create -f /root/Ansible_Kubernetes/jenkins/kube/jenkins-deployment.yaml --namespace jenkins
+        kubectl create -f /root/Ansible_Kubernetes/jenkins/kube/jenkins-service.yaml --namespace jenkins

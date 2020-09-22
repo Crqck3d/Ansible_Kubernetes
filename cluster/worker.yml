@@ -1,6 +1,6 @@
 ---
 
-- hosts: Worker
+- hosts: Nodes
   become: true
   become_method: sudo
 
@@ -10,11 +10,11 @@
       file: variables.yml
       name: params
 
-  - name: Copying token to worker nodes
+  - name: Copying token to nodes
     copy: src={{ params.file }} dest=token
 
-  - name: Joining worker nodes with kubernetes master
+  - name: Joining kubernetes master
     shell: |
-     kubeadm reset -f
-     cat token | tail -2 > out.sh
-     sh out.sh
+      iptables -P FORWARD ACCEPT
+      cat token | tail -2 > out.sh
+      sh out.sh

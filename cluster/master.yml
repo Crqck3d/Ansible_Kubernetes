@@ -14,8 +14,6 @@
     shell: |
       iptables -P FORWARD ACCEPT
       kubeadm config images pull
-      kubeadm reset -f
-    register: output #kubeadm reset -f
 
   - name: Initializing Kubernetes cluster
     shell: |
@@ -34,6 +32,6 @@
     environment:
       KUBECONFIG: /root/.kube/config
 
-  - name: Installing the network add-on
+  - name: Installing Flannel network add-on
     shell: |
       kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
